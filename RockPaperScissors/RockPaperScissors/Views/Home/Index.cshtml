@@ -17,12 +17,7 @@
     </div>
     <br />
 
-    <div class="row" style="margin-top:4%;">
-        <div class="col-sm-4 col-sm-offset-5">
-            <span id="result" style="font-size:30px;"></span>
-        </div>
-    </div>
-    <div class="row">
+    <div class="row" style="margin-top:3%;">
         <div class="col-sm-4">
             <h2>Player move</h2>
             <div class="panel panel-default">
@@ -42,13 +37,17 @@
         </div>
         <div class="col-sm-3">
             <div class="col-sm-12 score">
-                <span style="font-size:20px;" class="text-success">Wins: 0</span>
-                <span style="font-size:20px;" class="text-warning">Ties: 0</span>
-                <span style="font-size:20px;" class="text-danger">Loses: 0</span>            
+                <span style="font-size:20px;" class="text-success">Wins:<span id="Win" data-value="0"> 0</span></span>
+                <span style="font-size:20px;" class="text-warning">Ties:<span id="Tie" data-value="0"> 0</span></span>
+                <span style="font-size:20px;" class="text-danger">Loses:<span id="Lose" data-value="0"> 0</span></span>            
             </div>
             <div class="col-sm-12 hidden" id="timerDiv">
                 <strong class="col-sm-6">Time left: </strong>
                 <strong id="timer" class="col-sm-6"></strong></div>
+
+            <div class="col-sm-6 col-sm-offset-4 hidden" id="result">
+                <span style="font-size:30px;"></span>
+            </div>
         </div>
          <div class="col-sm-4">
                 <h2>Computer move</h2>
@@ -72,6 +71,7 @@
         var movePlayer = -1;
 
         function startTimer() {
+            $(("#result")).addClass("hidden");
             $(".buttonChoose").each(function(i, obj) {
                 $(this).prop( "disabled", false );
             });
@@ -94,12 +94,18 @@
                     var jqxhr = $.getJSON("/api/simpleAI", { move: movePlayer }, function () {
                     })
                       .done(function (data) {
+                          if (data!=undefined){
                           $("#timerDiv").addClass("hidden");
                           $(("#panelComputer")).empty();
-                          $(("#result")).empty();
-                          $(("#result")).text(data.Result);
+                          $(("#result")).removeClass("hidden");
+                          $(("#result")).addClass("text-success");
+                          $(("#result")).children().first().text(data.Result);
                           
                           //[TODO] - more friendly UI for display the results, (maybe animation ?)
+                          var newResult = parseInt($("#"+data.Result).attr("data-value"))+1;
+                          $("#"+data.Result).text(newResult);
+                          $("#"+data.Result).attr("data-value", newResult);
+
                           switch (data.Id) {
                               case 0: {
                                   var icon = IconsCreator('fa fa-hand-rock-o fa-5x col-sm-offset-5');
@@ -116,6 +122,7 @@
                                   $(icon).appendTo("#panelComputer");
                                   break;
                               }
+                          }
                           }
                       })
                       .fail(function () {

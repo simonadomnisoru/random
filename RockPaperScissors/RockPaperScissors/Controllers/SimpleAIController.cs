@@ -10,6 +10,16 @@
 
     public class SimpleAIController : ApiController
     {
+        private List<HistoryMovesList> historyMoves;
+
+        public SimpleAIController() {
+            historyMoves = new List<HistoryMovesList> {
+                new HistoryMovesList { Move = (int)Moves.Paper},
+                new HistoryMovesList { Move = (int)Moves.Rock},
+                new HistoryMovesList { Move = (int)Moves.Scissors}
+            };
+        }
+
         public OptionSelectedViewModel Get(int move)
         {
             Random rnd = new Random();
@@ -30,18 +40,21 @@
                             case 0: {
                                     model.Result = Result.Tie.ToString();
                                     model.TypeResult = (int)Result.Tie;
+                                    historyMoves.Where(m => m.Move == (int)Moves.Rock).FirstOrDefault().Score += 1;
                                     break;
                                 }
                             case 1:
                                 {
                                     model.Result = Result.Win.ToString();
                                     model.TypeResult = (int)Result.Win;
+                                    historyMoves.Where(m => m.Move == (int)Moves.Paper).FirstOrDefault().Score += 1;
                                     break;
                                 }
                             case 2:
                                 {
                                     model.Result = Result.Lose.ToString();
                                     model.TypeResult = (int)Result.Lose;
+                                    historyMoves.Where(m => m.Move == (int)Moves.Scissors).FirstOrDefault().Score += 1;
                                     break;
                                 }
                         }
@@ -54,18 +67,21 @@
                                 {
                                     model.Result = Result.Lose.ToString();
                                     model.TypeResult = (int)Result.Lose;
+                                    historyMoves.Where(m => m.Move == (int)Moves.Rock).FirstOrDefault().Score += 1;
                                     break;
                                 }
                             case 1:
                                 {
                                     model.Result = Result.Tie.ToString();
                                     model.TypeResult = (int)Result.Tie;
+                                    historyMoves.Where(m => m.Move == (int)Moves.Paper).FirstOrDefault().Score += 1;
                                     break;
                                 }
                             case 2:
                                 {
                                     model.Result = Result.Win.ToString();
                                     model.TypeResult = (int)Result.Win;
+                                    historyMoves.Where(m => m.Move == (int)Moves.Scissors).FirstOrDefault().Score += 1;
                                     break;  }
                         }
                         break; }
@@ -76,19 +92,22 @@
                             case 0:
                                 {
                                     model.Result = Result.Win.ToString();
-                                    model.TypeResult = (int)Result.Lose;
+                                    model.TypeResult = (int)Result.Win;
+                                    historyMoves.Where(m => m.Move == (int)Moves.Rock).FirstOrDefault().Score += 1;
                                     break;
                                 }
                             case 1:
                                 {
                                     model.Result = Result.Lose.ToString();
                                     model.TypeResult = (int)Result.Lose;
+                                    historyMoves.Where(m => m.Move == (int)Moves.Paper).FirstOrDefault().Score += 1;
                                     break;
                                 }
                             case 2:
                                 {
                                     model.Result = Result.Tie.ToString();
                                     model.TypeResult = (int)Result.Tie;
+                                    historyMoves.Where(m => m.Move == (int)Moves.Scissors).FirstOrDefault().Score += 1;
                                     break;
                                 }
                         }
@@ -97,8 +116,6 @@
 
             return model;
         }
-
-        //[TODO] - store results
         //[TODO] - retart game
         //[TODO] - if still time - add some learning AI 
     }
