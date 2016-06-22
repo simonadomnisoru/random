@@ -1,0 +1,14 @@
+﻿.panel-body {
+    min-height:200px;
+    padding-top:0px;
+}
+.score {
+    padding-top:100px;
+}
+.chooseMove{
+    background-color: #f8f8f8;
+    
+}
+#panelPlayer,  #panelComputer{
+    padding-top:40px;
+}

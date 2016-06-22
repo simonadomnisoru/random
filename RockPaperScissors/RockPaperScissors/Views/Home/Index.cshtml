@@ -1,81 +1,146 @@
-﻿<div class="container">
+﻿
+@section styles{
+    <link href="~/Content/Index.css" rel="stylesheet" />
+}
+<div class="container">
     <br />
     <div class="row">
-        <strong style="font-size:20px;">Rock-Paper-Scissors: You vs. the Computer</strong> <br/>
+        <strong style="font-size:20px;">Rock-Paper-Scissors: You vs. the Computer</strong> <br />
         <strong>
             Test your strategy against the computer in this <a href="https://en.wikipedia.org/wiki/Rock-paper-scissors">rock-paper-scissors</a>
             game.
         </strong><br />
         <strong>
-            Instructiones: Once you want to start the game click the "Begin" button. From that point you have 5 seconds to choose you move.
+            Instructiones: Once you want to start the game click the "Begin" button. From that point you have 3 seconds to choose you move.
             Once you want to reset the score of your game click the "Reset" button.
         </strong>
     </div>
     <br />
 
     <div class="row" style="margin-top:4%;">
-        <div class="col-sm-5 col-lg-offset-4">
-            <span style="font-size:20px;" class="alert-success">Wins : 0</span>
-            <span style="font-size:20px;" class="alert-warning">Ties : 0</span>
-            <span style="font-size:20px;" class="alert-danger">Loses : 0</span>
+        <div class="col-sm-4 col-sm-offset-5">
+            <span id="result" style="font-size:30px;"></span>
         </div>
     </div>
-    <div class="row hidden">
-        <strong class="col-sm-1 col-lg-offset-4">Time left: </strong>
-        <strong id="timer" class="col-sm-2"></strong>
-    </div>
-        <div class="row">
-            <div class="col-sm-6">
-                <h2>Player move</h2>
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                       @*[TODO]display player move*@
+    <div class="row">
+        <div class="col-sm-4">
+            <h2>Player move</h2>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="chooseMove row">
+                        <button disabled="disabled" class="col-sm-4 btn btn-default buttonChoose" onclick="PlayerMove(this)" data-value="2">
+                        <i class="fa fa-hand-scissors-o" aria-hidden="true"></i>Scissors</button>
+                        <button disabled="disabled" class="col-sm-4 btn btn-default buttonChoose"  onclick="PlayerMove(this)" data-value="1">
+                         <i class="fa fa-hand-paper-o" aria-hidden="true"></i>Paper
+                        </button>
+                        <button disabled="disabled" class="col-sm-4 btn btn-default buttonChoose" onclick="PlayerMove(this)" data-value="0">
+                        <i class="fa fa-hand-rock-o" aria-hidden="true" ></i>Rock</button>
                     </div>
+                    <div id="panelPlayer"></div>
                 </div>
             </div>
-            <div class="col-sm-6">
-
+        </div>
+        <div class="col-sm-3">
+            <div class="col-sm-12 score">
+                <span style="font-size:20px;" class="text-success">Wins: 0</span>
+                <span style="font-size:20px;" class="text-warning">Ties: 0</span>
+                <span style="font-size:20px;" class="text-danger">Loses: 0</span>            
+            </div>
+            <div class="col-sm-12 hidden" id="timerDiv">
+                <strong class="col-sm-6">Time left: </strong>
+                <strong id="timer" class="col-sm-6"></strong></div>
+        </div>
+         <div class="col-sm-4">
                 <h2>Computer move</h2>
                 <div class="panel panel-default">
-                    <div class="panel-body">
-                      @*[TODO]loading animation*@
-                      @*[TODO]display computer move*@
+                    <div class="panel-body" id="panelComputer">
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row hidden">
-            <i class="fa fa-hand-scissors-o fa-4x" aria-hidden="true"></i>
-            <i class="fa fa-hand-paper-o fa-4x" aria-hidden="true"></i>
-            <i class="fa fa-hand-rock-o fa-4x" aria-hidden="true"></i>
-        </div>
+    <div class="row">
         <hr />
         <div class="row">
-            <button class="btn btn-primary col-sm-1 col-lg-offset-5" onclick="startTimer()">Begin</button>
-            <button class="btn btn-primary col-sm-1">Reset </button>
+            <button class="btn btn-primary col-sm-1 col-lg-offset-4" onclick="startTimer()">Begin</button>
+            <button class="btn btn-primary col-sm-1 col-sm-offset-1">Reset </button>
         </div>
     </div>
+</div>
 
 @section Scripts {
     <script type="text/javascript">
-        $(document).ready(function () {
-          
-        });
+        var movePlayer = -1;
 
         function startTimer() {
-            //[TODO] ask for computer move
+            $(".buttonChoose").each(function(i, obj) {
+                $(this).prop( "disabled", false );
+            });
+
+            $(("#panelComputer")).empty();
+            var icon = IconsCreator('fa fa-spinner fa-spin fa-5x col-sm-offset-5');
+            $(icon).appendTo("#panelComputer");
+
             var secs = 0;
+            $("#timerDiv").removeClass("hidden");
+            $("#timer").text(3 - secs + " seconds");
             var id = setInterval(function () {
                 secs++;
-                $("#timer").text(5-secs + " seconds");
-                if (secs > 4) {
+                $("#timer").text(3 - secs + " seconds");
+
+                if (secs > 2) {
+                    $(".buttonChoose").each(function (i, obj) {
+                        $(this).prop("disabled", true);
+                    });
+                    var jqxhr = $.getJSON("/api/simpleAI", { move: movePlayer }, function () {
+                    })
+                      .done(function (data) {
+                          $("#timerDiv").addClass("hidden");
+                          $(("#panelComputer")).empty();
+                          $(("#result")).empty();
+                          $(("#result")).text(data.Result);
+                          
+                          //[TODO] - more friendly UI for display the results, (maybe animation ?)
+                          switch (data.Id) {
+                              case 0: {
+                                  var icon = IconsCreator('fa fa-hand-rock-o fa-5x col-sm-offset-5');
+                                  $(icon).appendTo("#panelComputer");
+                                  break;
+                              }
+                              case 1: {
+                                  var icon = IconsCreator('fa fa-hand-paper-o fa-5x col-sm-offset-5');
+                                  $(icon).appendTo("#panelComputer");
+                                  break;
+                              }
+                              case 2: {
+                                  var icon = IconsCreator('fa fa-hand-scissors-o fa-5x col-sm-offset-5');
+                                  $(icon).appendTo("#panelComputer");
+                                  break;
+                              }
+                          }
+                      })
+                      .fail(function () {
+                          console.log("error");
+                      });
+                  
                     clearInterval(id);
-                    //[TODO] reveal computer move
-                    //[TODO] compute result
-                    //[TODO] send back the results for history storage purpose
                 }
             }, 1000);
 
+        }
+
+        function PlayerMove(element) {
+            $(("#panelPlayer")).empty();
+            var clone = $(element).children().first().clone();
+            clone.addClass("col-sm-offset-5");
+            clone.addClass("fa-5x");
+            clone.appendTo("#panelPlayer");
+            movePlayer = $(element).attr("data-value");
+        }
+
+        function IconsCreator(iconClass) {
+            var icon = document.createElement("i");
+            $(icon).attr("class", iconClass);
+            return icon;
         }
     </script>
 }
