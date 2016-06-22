@@ -1,24 +1,81 @@
-﻿<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
-        a broad range of clients, including browsers and mobile devices. ASP.NET Web API
-        is an ideal platform for building RESTful applications on the .NET Framework.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a></p>
+﻿<div class="container">
+    <br />
+    <div class="row">
+        <strong style="font-size:20px;">Rock-Paper-Scissors: You vs. the Computer</strong> <br/>
+        <strong>
+            Test your strategy against the computer in this <a href="https://en.wikipedia.org/wiki/Rock-paper-scissors">rock-paper-scissors</a>
+            game.
+        </strong><br />
+        <strong>
+            Instructiones: Once you want to start the game click the "Begin" button. From that point you have 5 seconds to choose you move.
+            Once you want to reset the score of your game click the "Reset" button.
+        </strong>
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301871">Learn more &raquo;</a></p>
+    <br />
+
+    <div class="row" style="margin-top:4%;">
+        <div class="col-sm-5 col-lg-offset-4">
+            <span style="font-size:20px;" class="alert-success">Wins : 0</span>
+            <span style="font-size:20px;" class="alert-warning">Ties : 0</span>
+            <span style="font-size:20px;" class="alert-danger">Loses : 0</span>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a></p>
+    <div class="row hidden">
+        <strong class="col-sm-1 col-lg-offset-4">Time left: </strong>
+        <strong id="timer" class="col-sm-2"></strong>
     </div>
-</div>
+        <div class="row">
+            <div class="col-sm-6">
+                <h2>Player move</h2>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                       @*[TODO]display player move*@
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+
+                <h2>Computer move</h2>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                      @*[TODO]loading animation*@
+                      @*[TODO]display computer move*@
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row hidden">
+            <i class="fa fa-hand-scissors-o fa-4x" aria-hidden="true"></i>
+            <i class="fa fa-hand-paper-o fa-4x" aria-hidden="true"></i>
+            <i class="fa fa-hand-rock-o fa-4x" aria-hidden="true"></i>
+        </div>
+        <hr />
+        <div class="row">
+            <button class="btn btn-primary col-sm-1 col-lg-offset-5" onclick="startTimer()">Begin</button>
+            <button class="btn btn-primary col-sm-1">Reset </button>
+        </div>
+    </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+          
+        });
+
+        function startTimer() {
+            //[TODO] ask for computer move
+            var secs = 0;
+            var id = setInterval(function () {
+                secs++;
+                $("#timer").text(5-secs + " seconds");
+                if (secs > 4) {
+                    clearInterval(id);
+                    //[TODO] reveal computer move
+                    //[TODO] compute result
+                    //[TODO] send back the results for history storage purpose
+                }
+            }, 1000);
+
+        }
+    </script>
+}

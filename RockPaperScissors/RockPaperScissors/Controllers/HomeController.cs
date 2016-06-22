@@ -10,7 +10,7 @@ namespace RockPaperScissors.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Title = "Home Page";
+            ViewBag.Title = "RockPaperScissors";
 
             return View();
         }
