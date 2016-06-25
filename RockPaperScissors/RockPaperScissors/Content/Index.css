@@ -7,6 +7,10 @@
     background-color: #f8f8f8;
     
 }
-#panelPlayer,  #panelComputer{
+#panelPlayer{
     padding-top:40px;
+}
+
+#panelComputer{
+    padding-top:60px;
 }
