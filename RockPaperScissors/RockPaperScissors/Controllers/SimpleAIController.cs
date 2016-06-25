@@ -11,6 +11,7 @@
     public class SimpleAIController : ApiController
     {
         private List<HistoryMovesList> historyMoves;
+        private int roundCount;
 
         public SimpleAIController() {
             historyMoves = new List<HistoryMovesList> {
@@ -18,6 +19,7 @@
                 new HistoryMovesList { Move = (int)Moves.Rock},
                 new HistoryMovesList { Move = (int)Moves.Scissors}
             };
+            roundCount = 0;
         }
 
         public OptionSelectedViewModel Get(int move)
@@ -113,10 +115,22 @@
                         }
                         break; }
             }
-
+            roundCount += 1;
             return model;
         }
-        //[TODO] - retart game
+
+        public IHttpActionResult Restart() {
+            try
+            {
+                roundCount = 0;
+                historyMoves.ForEach(m => m.Score = 0);
+                return Ok();
+            }
+            catch(Exception e) {
+                return BadRequest();
+            }
+        }
+
         //[TODO] - if still time - add some learning AI 
     }
 }

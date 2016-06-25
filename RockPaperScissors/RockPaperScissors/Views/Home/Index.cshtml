@@ -61,7 +61,7 @@
         <hr />
         <div class="row">
             <button class="btn btn-primary col-sm-1 col-lg-offset-4" onclick="startTimer()">Begin</button>
-            <button class="btn btn-primary col-sm-1 col-sm-offset-1">Reset </button>
+            <button class="btn btn-primary col-sm-1 col-sm-offset-1" onclick="Restart()">Restart </button>
         </div>
     </div>
 </div>
@@ -71,6 +71,8 @@
         var movePlayer = -1;
 
         function startTimer() {
+            $(("#panelPlayer")).empty();
+            movePlayer = -1
             $(("#result")).addClass("hidden");
             $(".buttonChoose").each(function(i, obj) {
                 $(this).prop( "disabled", false );
@@ -83,7 +85,7 @@
             var secs = 0;
             $("#timerDiv").removeClass("hidden");
             $("#timer").text(3 - secs + " seconds");
-            var id = setInterval(function () {
+            window.timer = setInterval(function () {
                 secs++;
                 $("#timer").text(3 - secs + " seconds");
 
@@ -129,10 +131,9 @@
                           console.log("error");
                       });
                   
-                    clearInterval(id);
+                    clearInterval(window.timer);
                 }
             }, 1000);
-
         }
 
         function PlayerMove(element) {
@@ -148,6 +149,32 @@
             var icon = document.createElement("i");
             $(icon).attr("class", iconClass);
             return icon;
+        }
+
+        function Restart() {
+            clearInterval(window.timer);
+            $.ajax({
+                type: "Post",
+                url: "api/simpleAI/Restart",
+                statusCode: {
+                    200: function (response) {
+                        $("#Win").text(0);
+                        $("#Win").attr("data-value", 0);
+                        $("#Tie").text(0);
+                        $("#Tie").attr("data-value", 0);
+                        $("#Lose").text(0);
+                        $("#Lose").attr("data-value", 0);
+                        $(("#panelPlayer")).empty();
+                        $(("#panelComputer")).empty();
+                        $(("#result")).addClass("hidden");
+                        $("#timerDiv").addClass("hidden");
+                    },
+                    400: function (response) {
+                        console.log("error");
+                    },
+                }
+            });
+
         }
     </script>
 }
