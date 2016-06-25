@@ -1,11 +1,12 @@
-﻿
+﻿@using RockPaperScissors.Models
+
 @section styles{
     <link href="~/Content/Index.css" rel="stylesheet" />
 }
 <div class="container">
     <br />
     <div class="row">
-        <strong style="font-size:20px;">Rock-Paper-Scissors: You vs. the Computer</strong> <br />
+        <strong id="gameTitle">Rock-Paper-Scissors: You vs. the Computer</strong> <br />
         <strong>
             Test your strategy against the computer in this <a href="https://en.wikipedia.org/wiki/Rock-paper-scissors">rock-paper-scissors</a>
             game.
@@ -16,7 +17,9 @@
         </strong>
     </div>
     <br />
-
+    <div class="row">
+        <ul id="messages" class="text-info"></ul>
+    </div>
     <div class="row" style="margin-top:3%;">
         <div class="col-sm-4">
             <h2>Player move</h2>
@@ -37,16 +40,16 @@
         </div>
         <div class="col-sm-3">
             <div class="col-sm-12 score">
-                <span style="font-size:20px;" class="text-success">Wins:<span id="Win" data-value="0"> 0</span></span>
-                <span style="font-size:20px;" class="text-warning">Ties:<span id="Tie" data-value="0"> 0</span></span>
-                <span style="font-size:20px;" class="text-danger">Loses:<span id="Lose" data-value="0"> 0</span></span>            
+                <span class="text-success">Wins:<span id="Win" data-value="0"> 0</span></span>
+                <span class="text-warning">Ties:<span id="Tie" data-value="0"> 0</span></span>
+                <span class="text-danger">Loses:<span id="Lose" data-value="0"> 0</span></span>            
             </div>
             <div class="col-sm-12 hidden" id="timerDiv">
                 <strong class="col-sm-6">Time left: </strong>
                 <strong id="timer" class="col-sm-6"></strong></div>
 
             <div class="col-sm-6 col-sm-offset-4 hidden" id="result">
-                <span style="font-size:30px;"></span>
+                <span class="text-info scaling"></span>
             </div>
         </div>
          <div class="col-sm-4">
@@ -72,6 +75,7 @@
 
         function startTimer() {
             $(("#panelPlayer")).empty();
+            $("#messages").empty();
             movePlayer = -1
             $(("#result")).addClass("hidden");
             $(".buttonChoose").each(function(i, obj) {
@@ -97,38 +101,43 @@
                     })
                       .done(function (data) {
                           if (data!=undefined){
-                          $("#timerDiv").addClass("hidden");
-                          $(("#panelComputer")).empty();
-                          $(("#result")).removeClass("hidden");
-                          $(("#result")).addClass("text-success");
-                          $(("#result")).children().first().text(data.Result);
-                          
-                          //[TODO] - more friendly UI for display the results, (maybe animation ?)
-                          var newResult = parseInt($("#"+data.Result).attr("data-value"))+1;
-                          $("#"+data.Result).text(newResult);
-                          $("#"+data.Result).attr("data-value", newResult);
+                              $("#timerDiv").addClass("hidden");
+                              $(("#panelComputer")).empty();
+                              if (data.Result != "@Moves.NotSelected.ToString()") {
+                              $(("#result")).removeClass("hidden");
+                              $(("#result")).addClass("");
+                              $(("#result")).children().first().text(data.Result);
+                              } else {
+                                  $("#messages").empty();
+                                  $("#messages").append("<li class=\"text-warning\">You didn't select any moves.</li>")
+                              }                          
 
-                          switch (data.Id) {
-                              case 0: {
-                                  var icon = IconsCreator('fa fa-hand-rock-o fa-5x col-sm-offset-5');
-                                  $(icon).appendTo("#panelComputer");
-                                  break;
+                              var newResult = parseInt($("#" + data.Result).attr("data-value")) + 1;
+                              $("#" + data.Result).text(newResult);
+                              $("#" + data.Result).attr("data-value", newResult);
+                         
+                              switch (data.Id) {
+                                  case 0: {
+                                      var icon = IconsCreator('fa fa-hand-rock-o fa-5x col-sm-offset-5');
+                                      $(icon).appendTo("#panelComputer");
+                                      break;
+                                  }
+                                  case 1: {
+                                      var icon = IconsCreator('fa fa-hand-paper-o fa-5x col-sm-offset-5');
+                                      $(icon).appendTo("#panelComputer");
+                                      break;
+                                  }
+                                  case 2: {
+                                      var icon = IconsCreator('fa fa-hand-scissors-o fa-5x col-sm-offset-5');
+                                      $(icon).appendTo("#panelComputer");
+                                      break;
+                                  }
                               }
-                              case 1: {
-                                  var icon = IconsCreator('fa fa-hand-paper-o fa-5x col-sm-offset-5');
-                                  $(icon).appendTo("#panelComputer");
-                                  break;
-                              }
-                              case 2: {
-                                  var icon = IconsCreator('fa fa-hand-scissors-o fa-5x col-sm-offset-5');
-                                  $(icon).appendTo("#panelComputer");
-                                  break;
-                              }
-                          }
                           }
                       })
                       .fail(function () {
-                          console.log("error");
+                          $("#messages").empty();
+                          $("#messages").append("<li class=\"text-danger\">An error occurred. Please try again or refresh (F5) the page</li>")
                       });
                   
                     clearInterval(window.timer);
@@ -168,9 +177,11 @@
                         $(("#panelComputer")).empty();
                         $(("#result")).addClass("hidden");
                         $("#timerDiv").addClass("hidden");
+                        $("#messages").empty();
                     },
                     400: function (response) {
-                        console.log("error");
+                        $("#messages").empty();
+                        $("#messages").append("<li class=\"text-danger\">An error occurred. Please try again or refresh (F5) the page</li>")
                     },
                 }
             });

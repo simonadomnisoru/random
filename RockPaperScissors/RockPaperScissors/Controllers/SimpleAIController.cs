@@ -10,43 +10,37 @@
     using System.Web.Http;
 
     public class SimpleAIController : ApiController
-    {
-        private List<HistoryMovesList> historyMoves;
-
-        public SimpleAIController() {
-            historyMoves = new List<HistoryMovesList> {
-                new HistoryMovesList { Move = (int)Moves.Paper},
-                new HistoryMovesList { Move = (int)Moves.Rock},
-                new HistoryMovesList { Move = (int)Moves.Scissors}
-            };
-        }
+    {      
 
         public OptionSelectedViewModel Get(int move)
         {
             int randomMove= -1;
-            int roundCount=1;
+            int roundCount=-1;
+            List<HistoryMovesList> historyMoves= new List<HistoryMovesList>();
 
             OptionSelectedViewModel model = new OptionSelectedViewModel();
             if (move == (int)Moves.NotSelected)
             {
-                model.Result = "Not selected";
+                model.Result = Moves.NotSelected.ToString();
                 return model;
             }
 
             var ctx = HttpContext.Current;
             if (ctx != null)
             {
-                try
-                {
                     if (ctx.Cache["historyMoves"] != null && ctx.Cache["roundCount"] != null)
                     {
                         roundCount = (int)ctx.Cache["roundCount"];
                         historyMoves = (List<HistoryMovesList>)ctx.Cache["historyMoves"];
+                    }else
+                    {
+                        roundCount = 1;
+                        historyMoves = new List<HistoryMovesList> {
+                            new HistoryMovesList { Move = (int)Moves.Paper},
+                            new HistoryMovesList { Move = (int)Moves.Rock},
+                            new HistoryMovesList { Move = (int)Moves.Scissors}
+                        };
                     }
-                }
-                catch(Exception e) {
-                    //TODO
-                }
             }
 
             if (roundCount < 3)
@@ -155,7 +149,6 @@
                ctx.Cache["historyMoves"] = historyMoves;
                ctx.Cache["roundCount"] = roundCount;
             }
-
             return model;
         }
 
@@ -163,21 +156,21 @@
             try
             {
                 var ctx = HttpContext.Current;
-                if (ctx != null && ctx.Cache["historyMoves"] != null && ctx.Cache["roundCount"] != null)
+                if (ctx != null)
                 {
-                    ctx.Cache.Remove("roundCount");
-                    ctx.Cache.Remove("historyMoves");
+                    if (ctx.Cache["historyMoves"] != null && ctx.Cache["roundCount"] != null)
+                    {
+                        ctx.Cache.Remove("roundCount");
+                        ctx.Cache.Remove("historyMoves");
+                    }
                     return Ok();
                 }
-                else {
-                    return BadRequest();
-                }
+                return BadRequest();
             }
             catch(Exception e) {
                 return BadRequest();
             }
         }
-
 
         /// <summary>
         ///  Returns the move that beats the input move
