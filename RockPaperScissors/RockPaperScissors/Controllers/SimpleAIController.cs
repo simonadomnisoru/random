@@ -47,7 +47,6 @@
             {
                 Random rnd = new Random();
                 randomMove = rnd.Next((int)Moves.Rock, (int)Moves.Scissors);
-                model.Id = randomMove;
             }
             else
             {
@@ -55,6 +54,7 @@
                 randomMove = WiningMove(movesList.FirstOrDefault().Move);              
             }
 
+            model.Id = randomMove;
             switch (randomMove)
                 {
                     case 0:
